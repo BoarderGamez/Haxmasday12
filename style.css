@@ -42,3 +42,7 @@ main {
   .left {
     grid-column: 6 / 12;
   }
+
+.no-invert {
+  filter: invert(var(--invert-amount, 0));
+}

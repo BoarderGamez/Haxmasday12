@@ -46,10 +46,13 @@ function animate() {
 }
 
 animate();
+
+const stars = [];
 function add_star() {
   const star_geometry = new THREE.SphereGeometry(0.25, 24, 24);
-  const star_material = new THREE.MeshBasicMaterial({ color: 0xffffff  });
+  const star_material = new THREE.MeshBasicMaterial({ color: 0xffffff });
   const star = new THREE.Mesh(star_geometry, star_material);
+  stars.push(star);
 
   const [x, y, z] = Array(3)
     .fill()
@@ -71,6 +74,27 @@ function moveCamera() {
   camera.position.x = t * -0.0000;
   camera.rotation.y = t * -0.0000;
 
+  const scrollHeight = document.body.scrollHeight - window.innerHeight;
+  const rawProgress = Math.min(1, Math.max(0, -t / scrollHeight));
+  
+  const scrollProgress = rawProgress < 0.4 ? 0 : rawProgress > 0.5 ? 1 : (rawProgress - 0.4) * 10;
+  
+  document.querySelector('main').style.filter = `invert(${scrollProgress})`;
+  
+  document.querySelectorAll('.no-invert').forEach(el => {
+    el.style.filter = `invert(${scrollProgress})`;
+  });
+
+  const bgColor = Math.round(255 * scrollProgress);
+  scene.background = new THREE.Color(`rgb(${bgColor}, ${bgColor}, ${bgColor})`);
+
+  stars.forEach(star => {
+    const starColor = Math.round(255 * (1 - scrollProgress));
+    star.material.color.setRGB(starColor / 255, starColor / 255, starColor / 255);
+  });
+
+  const invertedHue = (hue + scrollProgress * 0.5) % 1;
+  frog.material.color.setHSL(invertedHue, 1, 0.5);
 }
 
 document.body.onscroll = moveCamera;
