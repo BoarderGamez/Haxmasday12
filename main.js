@@ -26,6 +26,8 @@ const frog_tex = new THREE.MeshBasicMaterial({ color: 0xffffff });
 const frog = new THREE.Mesh(frog_geo, frog_tex);
 scene.add(frog);
 
+let hue = 0;
+
 camera.position.z = 18;
 
 
@@ -34,6 +36,9 @@ function animate() {
   frog.rotation.x += 0.01;
   frog.rotation.y += 0.01;
 
+  hue += 0.005;
+  if (hue > 1) hue = 0;
+  frog.material.color.setHSL(hue, 1, 0.5);
 
   renderer.render( scene, camera );
 
